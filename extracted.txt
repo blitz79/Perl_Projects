@@ -1,0 +1,26 @@
+**************
+Module:	GCD
+**************
+input CLK  BTNC  BTNL  BTNR  BTNU 
+input [15:0] SW 
+output reg [15:0] LED 
+output [6:0] C 
+output [7:0] AN 
+**************
+Module:	clock_div
+**************
+input clk_in  rst 
+output wire clk_out 
+**************
+Module:	convert 
+**************
+input clk 
+input [3:0] in 
+output reg [6:0] digit 
+**************
+Module:	seg_disp
+**************
+input clk disp odisp 
+input [15:0] in1 in2 
+output reg [6:0] c 
+output reg [7:0] an 

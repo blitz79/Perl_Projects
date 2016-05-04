@@ -1,16 +1,6 @@
-%hash = qw(module 0 endmodule 0 input 0 output 0);
 
 open(FILE,"GCD.v");
 @contents = <FILE>;
-foreach $line (@contents){
-	chomp ($line);
-	foreach $key (keys %hash){
-		if($line =~ m/\b$key\b/i){
-			$hash{$key}++;
-#			print "$line\n";
-		}
-	}
-}
 
 $line_start=0;
 $line_end=0;
@@ -51,36 +41,27 @@ push @positions, $line_start;
 push @positions, $line_end;
 #print "$module_start,-,$module_end,-,@positions\n@module_data\n";
 
-
+$i=0;
+@master = qw();
+%hash = qw();
 foreach $entry (@module_data){
 	if($entry =~ m/\bmodule\b\s+(.*?)\((.*?)\);/i){
 		$name = $1;
-		print "**************\nModule:	$name\n**************\n";
+		$i++;
+		$hash{$name}=$i;
 	}
 	if($entry =~ m/\binput\b|\boutput\b/){
-		#print "$line\n";
-		@ports = split(/\s+|\,|\;/,$entry);
-		print "@ports,\n";
+		$entry =~ s/\s+|\,|\;/ /g;
+		push @{$master[$i]},split /^\s+$/,$entry;
 	}
 }
 
-
-##extract module names
-#foreach $line (@contents){
-#	chomp($line);
-#	if(($line =~ m/\bmodule\b\s+(.*?)\((.*?)\);/i) && ($line !~ m/\-+/)){
-#		$name = $1;
-#		@list = split(/\,/,$2);
-#		print $name,"--","@list\n";
-#	} 
-#	if(($line =~ m/\binput\b|\boutput\b/) && ($line !~ m/\-+/)){
-#		#print "$line\n";
-#		@ports = split(/\s+|\,|\;/,$line);
-#		print @ports,"\n";
-#	}
-#}
-#
-#foreach $key (sort keys %hash){
-##	print"$key\t-\t$hash{$key}\n";
-#}
+open( $fh,'>','extracted.txt');
+foreach $key (sort keys %hash){
+	print $fh "**************\nModule:	$key\n**************\n";
+	foreach $val (@{$master[$hash{$key}]}){
+		print $fh $val,"\n";
+	}
+}
+close $fh;
 close (FILE);
